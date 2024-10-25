@@ -22,7 +22,29 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// Routes
+// https://portfolio-backend-tawny-gamma.vercel.app/
+
+// Allowed emails
+const allowedUsers = {
+  "saikotroydev@gmail.com": { role: "admin" },
+  "test@gmail.com": { role: "admin" },
+};
+const predefinedPassword = "PROGRAMMER2002@";
+
+// POST: Login with predefined emails
+app.post("/api/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (allowedUsers[email] && password === predefinedPassword) {
+    res.status(200).json({
+      message: "Login successful",
+      email,
+      role: allowedUsers[email].role,
+    });
+  } else {
+    res.status(401).json({ message: "Unauthorized: Invalid email or password" });
+  }
+});
 
 // GET: Fetch all blogs
 app.get("/api/blogs", async (req, res) => {
@@ -95,7 +117,6 @@ app.post("/api/projects", async (req, res) => {
   }
 });
 
-
 app.get("/api/experience", async (req, res) => {
   try {
     const experiences = await WorkExperience.find();
@@ -104,7 +125,6 @@ app.get("/api/experience", async (req, res) => {
     res.status(500).json({ message: "Error retrieving work experiences" });
   }
 });
-
 
 app.post("/api/experience", async (req, res) => {
   const { id, title, desc, className, thumbnail } = req.body;
@@ -123,6 +143,10 @@ app.post("/api/experience", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: "Error creating work experience", error });
   }
+});
+
+app.get("/", (req, res) => {
+  res.send("Portfolio is here");
 });
 
 // Start the server
